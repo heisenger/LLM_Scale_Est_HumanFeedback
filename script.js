@@ -213,8 +213,23 @@ function loadStimulus(index) {
         asciiHeading.style.marginBottom = "4px";
         stimulusAscii.before(asciiHeading);
 
+        // stimulusAscii.textContent = ascii.replace(/\\n/g, "\n");
+        // stimulusAscii.style.display = 'block';
         stimulusAscii.textContent = ascii.replace(/\\n/g, "\n");
+
+        const taskName = (s.__meta && s.__meta.task) || '';
+        if (taskName === 'Line length ratio') {
+            stimulusAscii.style.whiteSpace = 'pre';
+            stimulusAscii.style.overflowX = 'auto';
+            stimulusAscii.style.wordBreak = 'keep-all';
+        } else {
+            stimulusAscii.style.whiteSpace = 'pre-wrap';
+            stimulusAscii.style.overflowX = 'visible';
+            stimulusAscii.style.wordBreak = 'break-word';
+        }
         stimulusAscii.style.display = 'block';
+
+
         showedSomething = true;
     }
 

@@ -86,44 +86,54 @@ button:hover {
     font-family: monospace;
 }
 
-.ascii-wrapper {
-    overflow-x: auto;
-    overflow-y: hidden;
-    width: 100%;
-    -webkit-overflow-scrolling: touch;
-}
-
 #stimulus-ascii {
-    white-space: pre;
-    display: inline-block;
-    font-family: "Courier New", Courier, monospace;
-    font-size: 1em;
-
-    background-color: #e9ecef;
-    padding: 15px;
-    border-radius: 5px;
-
-    margin: 0;
-    min-width: max-content;
-    /* ✅ ensures it stays on one line */
-    max-width: none;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 8px;
+    font-family: monospace;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin: 8px auto;
+    text-align: left;
 }
 
-#countdown-timer,
-#trust-message {
+.ascii-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+
+.timer-wrapper {
+    text-align: center;
+    margin-top: 12px;
+    margin-bottom: 6px;
+}
+
+#countdown-container {
     position: fixed;
-    top: 12px;
+    top: 16px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 999;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
     background-color: rgba(255, 255, 255, 0.9);
-    padding: 8px 12px;
-    border-radius: 8px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 1.2rem;
     font-weight: bold;
-    font-size: 1.1rem;
-    text-align: center;
+    color: #333;
+    max-width: 90vw;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#countdown-timer {
     color: green;
-    width: max-content;
-    max-width: 95vw;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#trust-message {
+    color: green;
 }
