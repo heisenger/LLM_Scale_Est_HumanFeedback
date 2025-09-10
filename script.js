@@ -158,6 +158,7 @@ function loadStimulus(index) {
     const s = currentStimuli[index];
 
     // Reset visibility
+    document.getElementById("trust-message").classList.add("hidden");
     instructionText.classList.add('hidden');
     stimulusContent.classList.add('hidden');
     stimulusAscii.style.display = 'none';
@@ -294,27 +295,31 @@ nextButton.addEventListener('click', () => {
 
     if (s.type !== 'instruction') {
         const taskName = (s.__meta && s.__meta.task) || '';
-
         // ====================
         // Countdown timer logic
         // ====================
         const timerEl = document.getElementById("countdown-timer");
+        const trustEl = document.getElementById("trust-message");
 
-        // Reset any existing timer
+        // Clear old state
         clearInterval(timerInterval);
+        trustEl.classList.add("hidden");
+        timerEl.style.display = "block";
+
         countdown = 5;
-        timerEl.textContent = `⏳ ${countdown}s`;
-        timerEl.style.display = 'block';
+        timerEl.textContent = `⏳ ${countdown}`;
 
         timerInterval = setInterval(() => {
             countdown--;
-            if (countdown <= 0) {
+            if (countdown > 0) {
+                timerEl.textContent = `⏳ ${countdown}`;
+            } else {
                 clearInterval(timerInterval);
-                timerEl.textContent = `⏳ ⏱️ Trust your instinct - Just Estimate`;
-                return;
+                timerEl.style.display = 'none';
+                trustEl.classList.remove("hidden");
             }
-            timerEl.textContent = `⏳ ${countdown}s`;
         }, 1000);
+
 
         let responseValue;
 

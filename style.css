@@ -108,3 +108,27 @@ button:hover {
     /* ✅ ensures it stays on one line */
     max-width: none;
 }
+
+#countdown-timer {
+    position: fixed;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: green;
+    z-index: 1000;
+    text-align: center;
+}
+
+#trust-message {
+    position: fixed;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: green;
+    z-index: 1000;
+    text-align: center;
+}
