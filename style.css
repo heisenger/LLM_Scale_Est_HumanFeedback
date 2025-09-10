@@ -87,3 +87,10 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
+.task-stimulus {
+    white-space: nowrap;
+    overflow-x: auto;
+    display: block;
+    font-family: monospace;
+}

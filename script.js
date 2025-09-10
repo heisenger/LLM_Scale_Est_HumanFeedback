@@ -17,15 +17,22 @@ const BLOCKS = [
     { id: "noised_range3", label: "Noised · Session 3", js: "blocks/noised_range3.js" },
 ];
 
+// Randomize the block order
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
 
 /* Task-specific instructions shown at the top */
 const TASK_INSTRUCTIONS = {
     "Line length ratio":
-        "Estimate the ratio of the shorter line to the longer line as a decimal number between 0 and 1.",
+        "Estimate the <u>ratio of the shorter line to the longer line</u><br><span style='color:blue;'> move blue slider to decimal answer.</span>",
     "Marker Location":
-        "The left end of the line corresponds to 0.0, the right end corresponds to 1.0. Estimate the horizontal position of the center of the red dot as a decimal number between 0 and 1.",
+        "Estimate the <u>position of the center of the red dot</u>. Left-end is 0.0 and right-end is 1.0 <br><span style='color:blue;'> move blue slider to decimal answer.</span>",
     "Maze Distance":
-        "Estimate the straight-line (Euclidean) distance, in units, between the start and the end of the path.",
+        "Estimate the <u>straight-line distance, in units, between the start and the end of the path.</u><br><span style='color:blue;'> move blue slider to decimal answer.</span>",
     "Subtitle":
         "Estimate how many seconds it takes to say out loud the following text."
 };
@@ -41,6 +48,19 @@ function genId(prefix) {
 const participantId = (localStorage.getItem('participantId') || genId('P'));
 localStorage.setItem('participantId', participantId);
 
+const BLOCKS_KEY = `blocks_order_${participantId}`;
+let blocksOrder = localStorage.getItem(BLOCKS_KEY);
+
+if (blocksOrder) {
+    // Use saved order
+    const ids = JSON.parse(blocksOrder);
+    // Reorder BLOCKS in place
+    BLOCKS.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+} else {
+    // Shuffle and save order
+    shuffleArray(BLOCKS);
+    localStorage.setItem(BLOCKS_KEY, JSON.stringify(BLOCKS.map(b => b.id)));
+}
 /* ================================
    DOM
    ================================ */
@@ -72,6 +92,12 @@ function debugShow(obj, why) {
     }
     box.textContent = `DEBUG (${why}):\n` + JSON.stringify(obj, null, 2);
 }
+
+
+// Countdown logic
+let countdown = null;
+let timerInterval = null;
+
 
 /* ================================
    State for a running block
@@ -141,6 +167,10 @@ function loadStimulus(index) {
     responseSlider.style.display = 'none';
     sliderValueDisplay.style.display = 'none';
     responseNumber.style.display = 'none';
+    // Remove any old headings
+    const oldHeadings = experimentContainer.querySelectorAll('.stimulus-heading');
+    oldHeadings.forEach(el => el.remove());
+
 
     if (s.type === 'instruction') {
         instructionText.textContent = `${s.title || 'Instruction'} — ${s.text || ''}`;
@@ -165,18 +195,23 @@ function loadStimulus(index) {
 
     // Use innerHTML so we can add a line break cleanly
     const note = bothModalities
-        ? '<br><em>The text/ASCII and the image below depict the same stimulus and share the same true value.</em>'
+        ? '<br><em>The text and the image depict the same stimulus.</em>'
         : '';
     stimulusInstruction.innerHTML = (instr || s.block_name || '') + note;
 
     // ----------------------------
     // Stimuli
     // ----------------------------
-    let showedSomething = false;
 
     // Text (ASCII)
     const ascii = (s.ascii_art ?? '').toString().trim();
     if (ascii.length > 0) {
+        const asciiHeading = document.createElement("div");
+        asciiHeading.className = "stimulus-heading";  // ✅ key line
+        asciiHeading.innerHTML = "<strong>Text Description / ASCII</strong>";
+        asciiHeading.style.marginBottom = "4px";
+        stimulusAscii.before(asciiHeading);
+
         stimulusAscii.textContent = ascii.replace(/\\n/g, "\n");
         stimulusAscii.style.display = 'block';
         showedSomething = true;
@@ -185,6 +220,12 @@ function loadStimulus(index) {
     // Image
     const imgPath = (s.image_path ?? '').toString().trim();
     if (imgPath.length > 0) {
+        const imgHeading = document.createElement("div");
+        imgHeading.className = "stimulus-heading";  // ✅ key line
+        imgHeading.innerHTML = "<strong>Image</strong>";
+        imgHeading.style.marginBottom = "4px";
+        stimulusImage.before(imgHeading);
+
         stimulusImage.onerror = () => {
             stimulusImage.alt = '⚠ image not found';
             stimulusImage.style.display = 'block';
@@ -214,8 +255,22 @@ function loadStimulus(index) {
         responseNumber.style.display = 'inline-block';
         responseNumber.focus();
     } else {
-        responseSlider.value = 0.5;
-        sliderValueDisplay.textContent = '0.50';
+        let sliderMin = 0;
+        let sliderMax = 1;
+        let sliderStart = 0.5;
+        let sliderStep = 0.01;
+
+        if (taskName === 'Maze Distance') {
+            sliderMax = 10;
+            sliderStart = 5;
+            sliderStep = 0.1;
+        }
+
+        responseSlider.min = sliderMin;
+        responseSlider.max = sliderMax;
+        responseSlider.step = sliderStep;
+        responseSlider.value = sliderStart;
+        sliderValueDisplay.textContent = Number(responseSlider.value).toFixed(2);
         responseSlider.style.display = 'block';
         sliderValueDisplay.style.display = 'block';
     }
@@ -239,6 +294,28 @@ nextButton.addEventListener('click', () => {
 
     if (s.type !== 'instruction') {
         const taskName = (s.__meta && s.__meta.task) || '';
+
+        // ====================
+        // Countdown timer logic
+        // ====================
+        const timerEl = document.getElementById("countdown-timer");
+
+        // Reset any existing timer
+        clearInterval(timerInterval);
+        countdown = 5;
+        timerEl.textContent = `⏳ ${countdown}s`;
+        timerEl.style.display = 'block';
+
+        timerInterval = setInterval(() => {
+            countdown--;
+            if (countdown <= 0) {
+                clearInterval(timerInterval);
+                timerEl.textContent = `⏳ ⏱️ Trust your instinct - Just Estimate`;
+                return;
+            }
+            timerEl.textContent = `⏳ ${countdown}s`;
+        }, 1000);
+
         let responseValue;
 
         if (taskName === 'Subtitle') {
@@ -256,25 +333,30 @@ nextButton.addEventListener('click', () => {
         const m = s.__meta || {};
         results.push({
             participant_id: participantId,
+            sample_id: s.sample_id || '',
+            text: (s.true_value ?? ''),
+            ground_truth: (s.true_value ?? ''),
+            input_values: (s.true_value ?? ''),
+            predictions: responseValue,
+            prompt_sent: '',
+            response: responseValue,
+            range: m.range || '',
+
+            task: m.task || '',
+
+            text_input: s.ascii_art || '',
+            image_path: s.image_path || '',
+
             session_id: sessionId,
             started_at: startedAt,
             experiment: experimentName,
-
             session: m.session || '',
             condition: m.condition || '',
-            task: m.task || '',
-            range: m.range || '',
             block_name: s.block_name || '',
 
             stimulus_index: currentStimulusIndex,
             type: s.type,
 
-            ascii_art: s.ascii_art || '',
-            image_path: s.image_path || '',
-            true_value: (s.true_value ?? ''),
-            sample_id: s.sample_id || '',
-
-            response: responseValue,
             user_agent: userAgent
         });
     }
