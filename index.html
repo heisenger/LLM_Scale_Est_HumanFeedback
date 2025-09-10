@@ -1,6 +1,137 @@
-<h1>Experiment Selector</h1>
-<button onclick="window.location.href='line_length_ratio/index.html'">Experiment 1</button>
-<button onclick="window.location.href='line_length_ratio/index.html'">Experiment 2</button>
-<button onclick="window.location.href='line_length_ratio/index.html'">Experiment 3</button>
+<!DOCTYPE html>
+<html lang="en">
 
-<button onclick="window.location.href='index.html'">Back to Main Menu</button>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Perception Study</title>
+    <link rel="stylesheet" href="style.css?v=2" />
+    <style>
+        .hub {
+            max-width: 900px;
+            margin: 24px auto;
+            padding: 16px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 16px;
+            background: #fff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .05);
+        }
+
+        .card h3 {
+            margin: 0 0 8px;
+            font-size: 1.1rem;
+        }
+
+        .card p {
+            margin: 0 0 12px;
+            color: #555;
+            min-height: 2.6em;
+        }
+
+        .card button {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            background: #0d6efd;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .done {
+            color: #198754;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 24px auto;
+            padding: 16px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+        }
+
+        pre#stimulus-ascii {
+            background: #eef2f6;
+            padding: 10px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 14px;
+            line-height: 1.2;
+            color: #111;
+            /* make sure it's not blending with bg */
+        }
+
+        .response {
+            margin-top: 16px;
+        }
+
+        .controls {
+            margin-top: 16px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Hub -->
+    <section id="hub" class="hub">
+        <h1>Perception Study — Blocks</h1>
+        <p>Select a block below. Completed blocks show a tick and stay checked on refresh.</p>
+        <div id="blocks" class="grid"></div>
+    </section>
+
+    <!-- Runner -->
+    <section id="experiment-container" class="container hidden">
+        <div id="progress-indicator" style="text-align:center; font-weight:600; margin-bottom:6px;"></div>
+
+        <div id="instruction-text" class="hidden" style="text-align:center;"></div>
+
+        <div id="stimulus-content" class="hidden" style="text-align:center;">
+            <p id="stimulus-instruction" style="font-weight:600;"></p>
+            <pre id="stimulus-ascii" class="hidden"></pre>
+            <img id="stimulus-image" class="hidden" style="max-width:100%; height:auto" alt="stimulus" />
+            <div class="response">
+                <input id="response-slider" type="range" min="0" max="1" step="0.01" value="0.5" style="width:80%" />
+                <div id="slider-value" style="font-size:1.4rem; font-weight:700; margin-top:8px;">0.50</div>
+                <input id="response-number" type="number" inputmode="decimal" step="0.1" min="0"
+                    placeholder="Enter seconds"
+                    style="display:none; margin-top:10px; font-size:1rem; padding:6px 8px; width:220px;" />
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="back-button" type="button">Back</button>
+            <button id="next-button" type="button">Next</button>
+        </div>
+    </section>
+
+    <!-- Completion for a block -->
+    <section id="completion-screen" class="container hidden" style="text-align:center;">
+        <h2>Block complete — thank you!</h2>
+        <p>You can send your responses now and return to the block list.</p>
+        <button id="download-button">Send &amp; Return to Hub</button>
+    </section>
+
+    <script src="script.js?v=2"></script>
+</body>
+
+</html>
