@@ -111,7 +111,7 @@ button:hover {
 
 #countdown-timer {
     position: fixed;
-    top: 15px;
+    top: 10px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 1.4rem;
@@ -119,6 +119,8 @@ button:hover {
     color: green;
     z-index: 1000;
     text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
 }
 
 #trust-message {
