@@ -442,7 +442,7 @@ nextButton.addEventListener('click', () => {
         instructionText.classList.remove('hidden');
         instructionText.innerHTML =
             `<strong>Chunk ${chunk}/${totalChunks} completed!</strong><br>` +
-            `You can pause for a break, but dont refresh this page. Click <em>Continue</em> to proceed.`;
+            `Feel free to take a break - but ... please dont refresh this page. Click <em>Continue</em> to proceed.`;
 
         nextButton.textContent = 'Continue';
         pendingIntermission = true;
