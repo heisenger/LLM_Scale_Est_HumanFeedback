@@ -40,7 +40,22 @@ body {
     margin: 10px 0;
 }
 
+
 #stimulus-ascii {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1em;
+    text-align: left;
+    white-space: pre;
+    /* ✅ fix: prevents wrapping */
+    overflow-x: auto;
+    /* ✅ fix: horizontal scroll */
+    background-color: #e9ecef;
+    padding: 15px;
+    border-radius: 5px;
+    display: none;
+}
+
+/* #stimulus-ascii {
     font-family: "Courier New", Courier, monospace;
     font-size: 1em;
     text-align: left;
@@ -49,7 +64,7 @@ body {
     padding: 15px;
     border-radius: 5px;
     display: none;
-}
+} */
 
 #stimulus-image {
     max-width: 100%;
