@@ -385,22 +385,29 @@ function buildCSV() {
     const header = [
         "participant_id", "session_id", "started_at", "experiment",
         "session", "condition", "task", "range", "block_name",
-        "stimulus_index", "type", "ascii_art", "image_path", "true_value", "sample_id",
-        "response", "user_agent"
+        "stimulus_index", "type",
+        "sample_id", "text", "ground_truth", "input_values", "predictions", "prompt_sent", "response",
+        "text_input", "image_path",
+        "user_agent"
     ];
+
     let csv = header.join(",") + "\n";
     const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+
     results.forEach(r => {
         csv += [
             r.participant_id, r.session_id, r.started_at, r.experiment,
             r.session, r.condition, r.task, r.range, r.block_name,
             r.stimulus_index, r.type,
-            q(r.ascii_art), r.image_path, r.true_value, r.sample_id,
-            r.response, q(r.user_agent)
+            r.sample_id, r.text, r.ground_truth, r.input_values, r.predictions, r.prompt_sent, r.response,
+            q(r.text_input), r.image_path,
+            q(r.user_agent)
         ].join(",") + "\n";
     });
+
     return csv;
 }
+
 
 async function sendCsvThenReturn() {
     const csv = buildCSV();
