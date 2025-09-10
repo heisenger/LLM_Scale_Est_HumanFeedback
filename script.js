@@ -218,7 +218,7 @@ function loadStimulus(index) {
         stimulusAscii.textContent = ascii.replace(/\\n/g, "\n");
 
         const taskName = (s.__meta && s.__meta.task) || '';
-        if (taskName === 'Line length ratio') {
+        if (taskName === 'Line length ratio' || taskName === 'Marker Location') {
             stimulusAscii.style.whiteSpace = 'pre';
             stimulusAscii.style.overflowX = 'auto';
             stimulusAscii.style.wordBreak = 'keep-all';
