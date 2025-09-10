@@ -1,0 +1,89 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px 0;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+#welcome-screen,
+#experiment-container,
+#completion-screen {
+    text-align: center;
+    background: white;
+    padding: 20px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 800px;
+    max-width: 95%;
+}
+
+#instructions {
+    text-align: left;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 20px 0;
+}
+
+#stimulus-area {
+    text-align: left;
+    margin: 30px 0;
+}
+
+#stimulus-area h2,
+#stimulus-area h3 {
+    margin: 10px 0;
+}
+
+#stimulus-ascii {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1em;
+    text-align: left;
+    white-space: pre-wrap;
+    background-color: #e9ecef;
+    padding: 15px;
+    border-radius: 5px;
+    display: none;
+}
+
+#stimulus-image {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    margin-top: 15px;
+    display: none;
+}
+
+#response-area {
+    text-align: center;
+}
+
+#response-slider {
+    width: 80%;
+    margin: 20px 0;
+}
+
+#slider-value {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
