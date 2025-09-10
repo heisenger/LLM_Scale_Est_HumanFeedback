@@ -37,6 +37,11 @@ const TASK_INSTRUCTIONS = {
         "Estimate how many seconds it takes to say out loud the following text."
 };
 
+const SUBBLOCK_SIZE = 20;
+
+let pendingIntermission = false;
+let nextIndexAfterIntermission = null;
+
 /* ================================
    Participant/session metadata
    ================================ */
@@ -298,7 +303,31 @@ function loadStimulus(index) {
     }
 
     nextButton.textContent = 'Next';
-    progressIndicator.textContent = `Trial ${index + 1} of ${currentStimuli.length}`;
+    // --- progress: count only non-instruction trials ---
+    const totalNonInstr = currentStimuli.filter(t => t.type !== 'instruction').length;
+    const trialsUpToHere = currentStimuli.slice(0, index + 1).filter(t => t.type !== 'instruction').length;
+
+    if (totalNonInstr > 0 && trialsUpToHere > 0) {
+        const chunk = Math.ceil(trialsUpToHere / SUBBLOCK_SIZE);
+        const totalChunks = Math.ceil(totalNonInstr / SUBBLOCK_SIZE);
+
+        // trial number within the current chunk
+        const trialInChunk = ((trialsUpToHere - 1) % SUBBLOCK_SIZE) + 1;
+        const chunkSizeThis = (chunk < totalChunks)
+            ? SUBBLOCK_SIZE
+            : (totalNonInstr - SUBBLOCK_SIZE * (totalChunks - 1)); // last chunk may be shorter
+
+        // Choose one of these display styles (keep one, comment the other):
+
+        // A) Compact (chunk only)
+        // progressIndicator.textContent = `Chunk ${chunk}/${totalChunks}`;
+
+        // B) Chunk + local trial
+        progressIndicator.textContent = `Chunk ${chunk}/${totalChunks} — Trial ${trialInChunk} of ${chunkSizeThis}`;
+    } else {
+        progressIndicator.textContent = '';
+    }
+
 }
 
 /* ================================
@@ -312,6 +341,13 @@ responseSlider.addEventListener('input', () => {
    Next / Back
    ================================ */
 nextButton.addEventListener('click', () => {
+
+    if (pendingIntermission) {
+        pendingIntermission = false;
+        currentStimulusIndex = nextIndexAfterIntermission;
+        loadStimulus(currentStimulusIndex);
+        return;
+    }
     const s = currentStimuli[currentStimulusIndex];
 
     if (s.type !== 'instruction') {
@@ -386,6 +422,34 @@ nextButton.addEventListener('click', () => {
             user_agent: userAgent
         });
     }
+
+    // --- after results.push(...) and before incrementing index ---
+    // Determine if we just finished a chunk (every SUBBLOCK_SIZE trials), excluding instructions
+    const totalNonInstr = currentStimuli.filter(t => t.type !== 'instruction').length;
+    const completedNonInstr = currentStimuli.slice(0, currentStimulusIndex + 1)
+        .filter(t => t.type !== 'instruction').length;
+
+    const totalChunks = Math.ceil(totalNonInstr / SUBBLOCK_SIZE);
+    const justFinishedAChunk = (completedNonInstr > 0) &&
+        (completedNonInstr % SUBBLOCK_SIZE === 0) &&
+        (completedNonInstr < totalNonInstr);
+
+    if (justFinishedAChunk) {
+        const chunk = completedNonInstr / SUBBLOCK_SIZE;
+
+        // Show a lightweight intermission screen
+        stimulusContent.classList.add('hidden');
+        instructionText.classList.remove('hidden');
+        instructionText.innerHTML =
+            `<strong>Chunk ${chunk}/${totalChunks} completed!</strong><br>` +
+            `You can pause for a break, but dont refresh this page. Click <em>Continue</em> to proceed.`;
+
+        nextButton.textContent = 'Continue';
+        pendingIntermission = true;
+        nextIndexAfterIntermission = currentStimulusIndex + 1;
+        return; // don't advance yet
+    }
+
 
     currentStimulusIndex++;
     if (currentStimulusIndex < currentStimuli.length) {

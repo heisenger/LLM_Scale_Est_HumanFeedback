@@ -43,12 +43,16 @@ body {
 }
 
 #stimulus-image {
+    display: block;
+    /* so auto margins can center it */
     max-width: 100%;
     height: auto;
     border: 1px solid #ccc;
-    margin-top: 15px;
-    display: none;
+    margin: 15px auto 0;
+    /* top | left/right | bottom  -> centers */
+    /* remove align-self unless parent is flex */
 }
+
 
 #response-area {
     text-align: center;
