@@ -109,6 +109,7 @@ button:hover {
     max-width: none;
 }
 
+/* 
 #countdown-timer {
     position: fixed;
     top: 10px;
@@ -133,4 +134,23 @@ button:hover {
     color: green;
     z-index: 1000;
     text-align: center;
+} */
+
+#countdown-timer,
+#trust-message {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-align: center;
+    color: green;
+    width: max-content;
+    max-width: 95vw;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
