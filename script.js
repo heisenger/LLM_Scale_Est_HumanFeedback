@@ -204,34 +204,40 @@ function loadStimulus(index) {
     // Stimuli
     // ----------------------------
 
-    // Text (ASCII)
+    // --- Text (ASCII) ---
     const ascii = (s.ascii_art ?? '').toString().trim();
     if (ascii.length > 0) {
+        // Heading
         const asciiHeading = document.createElement("div");
-        asciiHeading.className = "stimulus-heading";  // ✅ key line
+        asciiHeading.className = "stimulus-heading";
         asciiHeading.innerHTML = "<strong>Text Description / ASCII</strong>";
         asciiHeading.style.marginBottom = "4px";
         stimulusAscii.before(asciiHeading);
 
-        // stimulusAscii.textContent = ascii.replace(/\\n/g, "\n");
-        // stimulusAscii.style.display = 'block';
+        // Text
         stimulusAscii.textContent = ascii.replace(/\\n/g, "\n");
 
-        const taskName = (s.__meta && s.__meta.task) || '';
-        if (taskName === 'Line length ratio' || taskName === 'Marker Location') {
-            stimulusAscii.style.whiteSpace = 'pre';
-            stimulusAscii.style.overflowX = 'auto';
-            stimulusAscii.style.wordBreak = 'keep-all';
-        } else {
-            stimulusAscii.style.whiteSpace = 'pre-wrap';
-            stimulusAscii.style.overflowX = 'visible';
-            stimulusAscii.style.wordBreak = 'break-word';
-        }
+        // Decide single-line vs multi-line based on task
+        const tnRaw = (s.__meta && s.__meta.task) ? s.__meta.task : '';
+        const tnKey = tnRaw.toString().toLowerCase().trim().replace(/[^a-z]/g, '');
+
+        // single-line tasks: Line length ratio, Marker location
+        const singleLine = tnKey.includes('linelengthratio') || tnKey.includes('markerlocation');
+
+        // Clear any leftover inline styles from previous trials
+        stimulusAscii.style.removeProperty('white-space');
+        stimulusAscii.style.removeProperty('overflow-x');
+        stimulusAscii.style.removeProperty('word-break');
+        stimulusAscii.style.removeProperty('overflow-wrap');
+
+        // Toggle mode classes (CSS will enforce behavior)
+        stimulusAscii.classList.remove('ascii-singleline', 'ascii-multiline');
+        stimulusAscii.classList.add(singleLine ? 'ascii-singleline' : 'ascii-multiline');
+
         stimulusAscii.style.display = 'block';
-
-
         showedSomething = true;
     }
+
 
     // Image
     const imgPath = (s.image_path ?? '').toString().trim();

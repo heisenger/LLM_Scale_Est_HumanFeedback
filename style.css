@@ -139,3 +139,18 @@ button:hover {
 #trust-message {
     color: green;
 }
+
+/* ASCII rendering modes */
+.ascii-singleline {
+    white-space: pre !important;
+    overflow-x: auto !important;
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+}
+
+.ascii-multiline {
+    white-space: pre-wrap !important;
+    overflow-x: hidden !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+}
