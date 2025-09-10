@@ -80,8 +80,8 @@ button:hover {
 }
 
 .task-stimulus {
-    white-space: nowrap;
-    overflow-x: auto;
+    /* white-space: nowrap;
+    overflow-x: auto; */
     display: block;
     font-family: monospace;
 }
