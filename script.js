@@ -39,9 +39,6 @@ const TASK_INSTRUCTIONS = {
 
 const SUBBLOCK_SIZE = 20;
 
-let pendingIntermission = false;
-let nextIndexAfterIntermission = null;
-
 /* ================================
    Participant/session metadata
    ================================ */
@@ -342,12 +339,6 @@ responseSlider.addEventListener('input', () => {
    ================================ */
 nextButton.addEventListener('click', () => {
 
-    if (pendingIntermission) {
-        pendingIntermission = false;
-        currentStimulusIndex = nextIndexAfterIntermission;
-        loadStimulus(currentStimulusIndex);
-        return;
-    }
     const s = currentStimuli[currentStimulusIndex];
 
     if (s.type !== 'instruction') {
@@ -423,32 +414,6 @@ nextButton.addEventListener('click', () => {
         });
     }
 
-    // --- after results.push(...) and before incrementing index ---
-    // Determine if we just finished a chunk (every SUBBLOCK_SIZE trials), excluding instructions
-    const totalNonInstr = currentStimuli.filter(t => t.type !== 'instruction').length;
-    const completedNonInstr = currentStimuli.slice(0, currentStimulusIndex + 1)
-        .filter(t => t.type !== 'instruction').length;
-
-    const totalChunks = Math.ceil(totalNonInstr / SUBBLOCK_SIZE);
-    const justFinishedAChunk = (completedNonInstr > 0) &&
-        (completedNonInstr % SUBBLOCK_SIZE === 0) &&
-        (completedNonInstr < totalNonInstr);
-
-    if (justFinishedAChunk) {
-        const chunk = completedNonInstr / SUBBLOCK_SIZE;
-
-        // Show a lightweight intermission screen
-        stimulusContent.classList.add('hidden');
-        instructionText.classList.remove('hidden');
-        instructionText.innerHTML =
-            `<strong>Chunk ${chunk}/${totalChunks} completed!</strong><br>` +
-            `Feel free to take a break - but ... please dont refresh this page. Click <em>Continue</em> to proceed.`;
-
-        nextButton.textContent = 'Continue';
-        pendingIntermission = true;
-        nextIndexAfterIntermission = currentStimulusIndex + 1;
-        return; // don't advance yet
-    }
 
 
     currentStimulusIndex++;
